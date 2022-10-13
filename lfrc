@@ -1,0 +1,50 @@
+set ratios 1:2:3
+# Options
+set drawbox
+set scrolloff 10
+
+# Image previews
+set previewer ~/.config/lf/preview/lf_kitty_preview
+set cleaner ~/.config/lf/preview/lf_kitty_clean
+
+set cleaner '~/.config/lf/cleaner'
+set previewer '~/.config/lf/scope'
+map i $LESSOPEN='| ~/.config/lf/scope-lf-wrapper.sh %s' less -R $f
+# Commands
+cmd mkdir %mkdir -p "$@"; lf -remote "send $id select \"$*\""
+cmd touch %touch "$@"
+
+cmd bulk-rename ${{
+    old="$(mktemp)"
+    new="$(mktemp)"
+    if [ -n "$fs" ]; then
+        fs="$(basename -a $fs)"
+    else
+        fs="$(ls)"
+    fi
+    printf '%s\n' "$fs" >"$old"
+    printf '%s\n' "$fs" >"$new"
+    $EDITOR "$new"
+    [ "$(wc -l < "$new")" -ne "$(wc -l < "$old")" ] && exit
+    paste "$old" "$new" | while IFS= read -r names; do
+        src="$(printf '%s' "$names" | cut -f1)"
+        dst="$(printf '%s' "$names" | cut -f2)"
+        if [ "$src" = "$dst" ] || [ -e "$dst" ]; then
+            continue
+        fi
+        mv -- "$src" "$dst"
+    done
+    rm -- "$old" "$new"
+    lf -remote "send $id unselect"
+}}
+
+map x cut
+map d delete
+map a push :touch<space>
+map A push :mkdir<space>
+
+# dedicated keys for file opener actions
+map o &mimeopen $f
+map O $mimeopen --ask $f
+map H set hidden!
+
