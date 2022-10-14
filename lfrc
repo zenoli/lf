@@ -4,12 +4,9 @@ set drawbox
 set scrolloff 10
 
 # Image previews
-set previewer ~/.config/lf/preview/lf_kitty_preview
-set cleaner ~/.config/lf/preview/lf_kitty_clean
+set previewer ~/.config/lf/preview/preview
+set cleaner ~/.config/lf/preview/cleaner
 
-set cleaner '~/.config/lf/cleaner'
-set previewer '~/.config/lf/scope'
-map i $LESSOPEN='| ~/.config/lf/scope-lf-wrapper.sh %s' less -R $f
 # Commands
 cmd mkdir %mkdir -p "$@"; lf -remote "send $id select \"$*\""
 cmd touch %touch "$@"

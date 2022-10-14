@@ -1,0 +1,12 @@
+#!/bin/sh
+
+TMUX="tmux"
+if [ -n "$TMUX" ]; then
+    "$XDG_CONFIG_HOME/lf/preview/lf_kitty_clean"
+    exit 0
+fi
+
+
+if [ -n "$FIFO_UEBERZUG" ]; then
+	printf '{"action": "remove", "identifier": "PREVIEW"}\n' > "$FIFO_UEBERZUG"
+fi
