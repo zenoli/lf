@@ -26,10 +26,10 @@ My config for the lf file manager
 * `mcomix` (optional - for .cbz and .cbr files)
 
 ### For drag and drop:
+
 * `dragon`
 
 ## Setup
-
 1. Clone this repo to ~/.config/lf
 2. run `make install`. This installs the `lf` wrapper-script `lfrun` into `$PATH`.
 3. Copy the following function to your .bashrc/.zshrc:
