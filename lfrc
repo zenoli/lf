@@ -1,7 +1,9 @@
 set ratios 1:2:3
 # Options
+set hidden
 set drawbox
 set scrolloff 10
+set info size:time
 
 # Image previews
 set previewer ~/.config/lf/preview/preview
