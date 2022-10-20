@@ -1,9 +1,14 @@
-set ratios 1:2:3
 # Options
+# set ratios 1:1:1
 set hidden
 set drawbox
 set scrolloff 10
 set info size:time
+set incfilter
+set incsearch
+
+set shellopts '-eu'
+set ifs "\n"
 
 # Image previews
 set previewer ~/.config/lf/preview/preview
@@ -12,6 +17,13 @@ set cleaner ~/.config/lf/preview/cleaner
 # Commands
 cmd mkdir %mkdir -p "$@"; lf -remote "send $id select \"$*\""
 cmd touch %touch "$@"
+
+cmd open ${{
+    case $(file --mime-type -Lb $f) in
+        text/*) $EDITOR $fx;;
+        *) for f in $fx; do setsid xdg-open $f > /dev/null 2> /dev/null & done;;
+    esac
+}}
 
 cmd bulk-rename ${{
     old="$(mktemp)"
@@ -37,13 +49,47 @@ cmd bulk-rename ${{
     lf -remote "send $id unselect"
 }}
 
+cmd yank-dirname $dirname -- "$f" | head -c-1 | xclip -i -selection clipboard
+cmd yank-path $printf '%s' "$fx" | xclip -i -selection clipboard
+cmd yank-basename $basename -a -- $fx | head -c-1 | xclip -i -selection clipboard
+
+cmd yank-basename-without-extension ${{
+    echo "$fx" |
+        xargs -r -d '\n' basename -a |
+        awk -e '{
+            for (i=length($0); i > 0; i--) {
+                if (substr($0, i, 1) == ".") {
+                    if (i == 1) print $0
+                    else print substr($0, 0, i-1)
+
+                        break
+                }
+            }
+
+            if (i == 0)
+                print $0
+        }' |
+    if [ -n "$fs" ]; then cat; else tr -d '\n'; fi |
+        xclip -i -selection clipboard
+}}
+
+# Unmap
+map y 
+# map F
+
+# Map
+map yy copy
+map yp yank-path
+map yd yank-dirname
+map yb yank-basename
 map x cut
 map d delete
 map a push :touch<space>
 map A push :mkdir<space>
+map <enter> shell
+map F filter
 
 # dedicated keys for file opener actions
-map o &mimeopen $f
 map O $mimeopen --ask $f
 map H set hidden!
 
