@@ -73,6 +73,10 @@ cmd yank-basename-without-extension ${{
         xclip -i -selection clipboard
 }}
 
+cmd drag-and-drop %dragon -a -x -T $fx
+cmd drag-all-and-stay %dragon -a -T $fx
+cmd drag-one-and-stay %dragon -T $fx
+
 # Unmap
 map y 
 # map F
@@ -88,8 +92,10 @@ map a push :touch<space>
 map A push :mkdir<space>
 map <enter> shell
 map F filter
+map <c-d> drag-and-drop
 
 # dedicated keys for file opener actions
-map O $mimeopen --ask $f
+map O $setsid mimeopen --ask $f
+map o $setsid xdg-open $f > /dev/null 2> /dev/null
 map H set hidden!
 
