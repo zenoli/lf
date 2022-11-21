@@ -93,6 +93,7 @@ map A push :mkdir<space>
 map <enter> shell
 map F filter
 map <c-d> drag-and-drop
+map R reload
 
 # dedicated keys for file opener actions
 map O $setsid mimeopen --ask $f
