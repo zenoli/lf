@@ -6,6 +6,7 @@ set scrolloff 10
 set info size:time
 set incfilter
 set incsearch
+set icons
 
 set shellopts '-eu'
 set ifs "\n"
@@ -21,6 +22,7 @@ cmd touch %touch "$@"
 cmd open ${{
     case $(file --mime-type -Lb $f) in
         text/*) $EDITOR $fx;;
+        application/json) $EDITOR $fx;;
         *) for f in $fx; do setsid xdg-open $f > /dev/null 2> /dev/null & done;;
     esac
 }}
@@ -47,6 +49,17 @@ cmd bulk-rename ${{
     done
     rm -- "$old" "$new"
     lf -remote "send $id unselect"
+}}
+
+# Archive bindings
+cmd unarchive ${{
+  case "$f" in
+      *.zip) unzip "$f" ;;
+      *.tar.gz) tar -xzvf "$f" ;;
+      *.tar.bz2) tar -xjvf "$f" ;;
+      *.tar) tar -xvf "$f" ;;
+      *) echo "Unsupported format" ;;
+  esac
 }}
 
 cmd yank-dirname $dirname -- "$f" | head -c-1 | xclip -i -selection clipboard
@@ -76,6 +89,8 @@ cmd yank-basename-without-extension ${{
 cmd drag-and-drop %dragon -a -x -T $fx
 cmd drag-all-and-stay %dragon -a -T $fx
 cmd drag-one-and-stay %dragon -T $fx
+cmd open-file-explorer &nautilus $PWD
+
 
 # Unmap
 map y 
@@ -94,9 +109,10 @@ map <enter> shell
 map F filter
 map <c-d> drag-and-drop
 map R reload
+map E open-file-explorer
 
 # dedicated keys for file opener actions
-map O $setsid mimeopen --ask $f
+map O $setsid mimeopen --ask $f 2> /dev/null
 map o $setsid xdg-open $f > /dev/null 2> /dev/null
 map H set hidden!
 
